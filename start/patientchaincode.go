@@ -31,19 +31,19 @@ type SimpleChaincode struct {
 // Patient - Defines the structure of Patient entity
 //=============================================================================================================================
 type Patient struct{
-    PatientId string `json:"PatientId"`
-    PatientFirstName string `json:"PatientFirstName"`
-    PatientLastName string `json:"PatientLastName"`
-    Address Address `json:Address`
+    PatientId string `json:"patientId"`
+    PatientFirstName string `json:"patientFirstName"`
+    PatientLastName string `json:"patientLastName"`
+    Address Address `json:"address"`
 }
 
 type Address struct{
-    AddressId string `json:"AddressId"`
-    AddressLine1 string `json:"AddressLine1"`
-    AddressLine2 string `json:"AddressLine2"`
-    City string `json:"City"`
-    State string `json:"State"`
-    Zip string `json:"Zip"`
+    AddressId string `json:"addressId"`
+    AddressLine1 string `json:"addressLine1"`
+    AddressLine2 string `json:"addressLine2"`
+    City string `json:"city"`
+    State string `json:"state"`
+    Zip string `json:"zip"`
 }
 
 // ============================================================================================================================
@@ -111,17 +111,17 @@ func (t *SimpleChaincode) createPatient(stub shim.ChaincodeStubInterface, args [
     state=args[7]
     zip=args[8]
     
-    patientId_json :=  "\"PatientId\":\""+patientId+"\", "      
-    patientFirstName_json := "\"PatientFirstName\":\""+patientFirstName+"\","
-    patientLastName_json := "\"PatientLastName\":\""+patientLastName+"\","    
-    addressId_json := "\"AddressId\":\""+addressId+"\","    
-    addressLine1_json := "\"AddressLine1\":\""+addressLine1+"\","    
-    addressLine2_json := "\"AddressLine2\":\""+addressLine2+"\","    
-    city_json := "\"City\":\""+city+"\","    
-    state_json := "\"State\":\""+state+"\","    
-    zip_json := "\"Zip\":\""+zip+"\""    
+    patientId_json :=  "\"patientId\":\""+patientId+"\", "      
+    patientFirstName_json := "\"patientFirstName\":\""+patientFirstName+"\","
+    patientLastName_json := "\"patientLastName\":\""+patientLastName+"\","    
+    addressId_json := "\"addressId\":\""+addressId+"\","    
+    addressLine1_json := "\"addressLine1\":\""+addressLine1+"\","    
+    addressLine2_json := "\"addressLine2\":\""+addressLine2+"\","    
+    city_json := "\"city\":\""+city+"\","    
+    state_json := "\"state\":\""+state+"\","    
+    zip_json := "\"zip\":\""+zip+"\""    
 
-    address_json := "\"Address\":{"+addressId_json+addressLine1_json+addressLine2_json+city_json+state_json+zip_json+"}"
+    address_json := "\"address\":{"+addressId_json+addressLine1_json+addressLine2_json+city_json+state_json+zip_json+"}"
 
     patient_json := "{"+patientId_json+patientFirstName_json+patientLastName_json+address_json+"}"
 
