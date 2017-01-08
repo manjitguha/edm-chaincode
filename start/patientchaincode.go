@@ -97,22 +97,20 @@ func (t *SimpleChaincode) createPatient(stub shim.ChaincodeStubInterface, args [
     fmt.Println("running createPatient()")
 
 
-    if len(args) != 7 {
+    if len(args) != 9 {
         return nil, errors.New("Incorrect number of arguments. Expecting 9. name of the variable and value to set")
     }
 
-
-    patientFirstName = args[0]
-    patientLastName=args[1]
-    patientId = patientFirstName+patientLastName
-
-    addressLine1=args[2]
-    addressLine2=args[3]
-    city=args[4]
-    state=args[5]
-    zip=args[6]
-    addressId = addressLine1+addressLine2+city+state+zip
-
+    patientId = args[0]
+    patientFirstName = args[1]
+    patientLastName=args[2]
+    addressId =args[3]
+    addressLine1=args[4]
+    addressLine2=args[5]
+    city=args[6]
+    state=args[7]
+    zip=args[8]
+    
     patientId_json :=  "\"patientId\":\""+patientId+"\", "      
     patientFirstName_json := "\"patientFirstName\":\""+patientFirstName+"\","
     patientLastName_json := "\"patientLastName\":\""+patientLastName+"\","    
