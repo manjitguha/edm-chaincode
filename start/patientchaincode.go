@@ -198,6 +198,7 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 func (t *SimpleChaincode) getPatient(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
     var patientId, jsonResp string
     var err error
+    var p Patient
 
     if len(args) != 1 {
         return nil, errors.New("Incorrect number of arguments. Expecting ID of the patient to query")
@@ -210,7 +211,20 @@ func (t *SimpleChaincode) getPatient(stub shim.ChaincodeStubInterface, args []st
         return nil, errors.New(jsonResp)
     }
 
-    return valAsbytes, nil
+    err = json.Unmarshal(valAsbytes, &p);
+
+    if err != nil { 
+        fmt.Printf("getPatient: Corrupt Patient record "+string(valAsbytes)+": %s", err); 
+        return nil, errors.New("getPatient: Invalid patient object") 
+    }
+
+    bytes, err := json.Marshal(p)
+
+    if err != nil { 
+        return nil, errors.New("getPatient: Invalid patient object") 
+    }
+
+    return bytes, nil
 }
 
 func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
