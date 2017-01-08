@@ -38,12 +38,12 @@ type Patient struct{
 }
 
 type Address struct{
-    addressId string `json:"addressId"`
-    addressLine1 string `json:"addressLine1"`
-    addressLine2 string `json:"addressLine2"`
-    city string `json:"city"`
-    state string `json:"state"`
-    zip string `json:"zip"`
+    AddressId string `json:"addressId"`
+    AddressLine1 string `json:"addressLine1"`
+    AddressLine2 string `json:"addressLine2"`
+    City string `json:"city"`
+    State string `json:"state"`
+    Zip string `json:"zip"`
 }
 
 // ============================================================================================================================
