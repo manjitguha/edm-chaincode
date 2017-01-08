@@ -1,26 +1,12 @@
-/*
-Copyright IBM Corp 2016 All Rights Reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-		 http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package main
 
 import (
-"errors"
-"fmt"
-"encoding/json"
-"github.com/hyperledger/fabric/core/chaincode/shim"
+    "errors"
+    "fmt"
+    "log"
+    "encoding/json"
+    "os/exec"
+    "github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
 // SimpleChaincode example simple Chaincode implementation
@@ -37,8 +23,29 @@ type Patient struct{
     Address Address `json:"address"`
 }
 
+
+//=============================================================================================================================
+// Provider - Defines the structure of Provider entity
+//=============================================================================================================================
+type Provider struct{
+    ProviderId string `json:"providerId"`
+    ProviderFirstName string `json:"providerFirstName"`
+    ProviderLastName string `json:"providerLastName"`
+    Address Address `json:"address"`
+}
+
+//=============================================================================================================================
+// Appointment - Defines the structure of Appointment entity
+//=============================================================================================================================
+type Appointment struct{
+    AppointmentId string `json:"appointmentId"`
+
+}
+
+//=============================================================================================================================
+// Address - Defines the structure of Address entity
+//=============================================================================================================================
 type Address struct{
-    AddressId string `json:"addressId"`
     AddressLine1 string `json:"addressLine1"`
     AddressLine2 string `json:"addressLine2"`
     City string `json:"city"`
@@ -81,7 +88,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
         return t.write(stub, args)
     } else if function == "createPatient" {
         return t.createPatient(stub, args)
-    }
+    }  
 
 
     fmt.Println("invoke did not find func: " + function)
@@ -92,42 +99,46 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 
 func (t *SimpleChaincode) createPatient(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
     var p Patient
-    var patientId, patientFirstName, patientLastName,addressId,addressLine1,addressLine2,city,state,zip string
+    var patientId, patientFirstName, patientLastName,addressLine1,addressLine2,city,state,zip string
     var err error
     fmt.Println("running createPatient()")
 
 
-    if len(args) != 9 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 9. name of the variable and value to set")
+    if len(args) != 7 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 7. name of the variable and value to set")
     }
 
-    patientId = args[0]
-    patientFirstName = args[1]
-    patientLastName=args[2]
-    addressId =args[3]
-    addressLine1=args[4]
-    addressLine2=args[5]
-    city=args[6]
-    state=args[7]
-    zip=args[8]
+    uuid, err := exec.Command("uuidgen").Output()
+    if err != nil {
+        log.Fatal(err)
+        return nil, err
+    }
+
+    patientId = string(uuid)
+    patientFirstName = args[0]
+    patientLastName=args[1]
+    addressLine1=args[2]
+    addressLine2=args[3]
+    city=args[4]
+    state=args[5]
+    zip=args[6]
     
     patientId_json :=  "\"patientId\":\""+patientId+"\", "      
     patientFirstName_json := "\"patientFirstName\":\""+patientFirstName+"\","
     patientLastName_json := "\"patientLastName\":\""+patientLastName+"\","    
-    addressId_json := "\"addressId\":\""+addressId+"\","    
     addressLine1_json := "\"addressLine1\":\""+addressLine1+"\","    
     addressLine2_json := "\"addressLine2\":\""+addressLine2+"\","    
     city_json := "\"city\":\""+city+"\","    
     state_json := "\"state\":\""+state+"\","    
     zip_json := "\"zip\":\""+zip+"\""    
 
-    address_json := "\"address\":{"+addressId_json+addressLine1_json+addressLine2_json+city_json+state_json+zip_json+"}"
+    address_json := "\"address\":{"+addressLine1_json+addressLine2_json+city_json+state_json+zip_json+"}"
 
     patient_json := "{"+patientId_json+patientFirstName_json+patientLastName_json+address_json+"}"
 
     err = json.Unmarshal([]byte(patient_json), &p)  
 
-    _, err  = t.save_changes(stub, p)
+    bytes, err  := t.save_changes(stub, p)
 
     //err = stub.PutState(patientId, []byte(patient_json))  //write the variable into the chaincode state
     if err != nil {
@@ -136,24 +147,24 @@ func (t *SimpleChaincode) createPatient(stub shim.ChaincodeStubInterface, args [
 
     fmt.Println("Patient created successfully")
 
-    return nil, nil
+    return bytes, nil
 }
 
-func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, p Patient) (bool, error) {
+func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, p Patient) ([]byte, error) {
     bytes, err := json.Marshal(p)
     if err != nil { 
         fmt.Printf("SAVE_CHANGES: Error converting patient record: %s", err); 
-        return false, errors.New("Error converting patient record") 
+        return nil, errors.New("Error converting patient record") 
     }
 
     err = stub.PutState(p.PatientId, bytes)
 
     if err != nil { 
         fmt.Printf("SAVE_CHANGES: Error storing patient record: %s", err); 
-        return false, errors.New("Error storing patient record") 
+        return nil, errors.New("Error storing patient record") 
     }
 
-    return true, nil
+    return bytes, nil
 }
 
 
