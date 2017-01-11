@@ -44,8 +44,6 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
     // Handle different functions
     if function == "init" {
         return t.Init(stub, "init", args)
-    }  else if function == "createAppointment" {
-        return t.createAppointment(stub, args)
     }  
 
     fmt.Println("invoke did not find func: " + function)
@@ -58,6 +56,10 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 // Query is our entry point for queries
 func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
     fmt.Println("query is running " + function)
+
+    if function == "createAppointment" {                           
+        return t.createAppointment(stub, args)
+    }
 
     fmt.Println("query did not find func: " + function)
 
