@@ -23,7 +23,7 @@ func (t *SimpleChaincode) createAppointment(stub shim.ChaincodeStubInterface, ar
 
     if err != nil { 
         fmt.Printf("createAppointment: Error getting UUID: %s", err); 
-        return nil, errors.New("createAppointment: Error getting UUID") 
+        return nil, err
     }
 
     patientId = string(uuid)
@@ -69,7 +69,7 @@ func (t *SimpleChaincode) getUUID()([]byte, error){
     uuid, err := exec.Command("uuidgen").Output()
     if err != nil { 
         fmt.Printf("getUUID: Error getting UUID: %s", err); 
-        return nil, errors.New(string(err)) 
+        return nil, err 
     }
     return uuid, nil
 }
