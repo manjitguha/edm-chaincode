@@ -67,9 +67,10 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
     fmt.Println("query is running " + function)
 
     if function == "getUUID" {
-        return t.Init(stub, "getUUID", args)
+        return t.getUUID()
     }
-   
+
+    
     fmt.Println("query did not find func: " + function)
 
     return nil, errors.New("Received unknown function query")
