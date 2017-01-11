@@ -67,7 +67,7 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, p Patie
 
 func (t *SimpleChaincode) getUUID()([]byte, error){
     uuid, err := exec.Command("/bin/uuidgen").Output()
-    if err != nil { 
+    if err != nil {  
         fmt.Printf("getUUID: Error getting UUID: %s", err); 
         return nil, err 
     }
