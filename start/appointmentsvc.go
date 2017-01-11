@@ -69,7 +69,7 @@ func (t *SimpleChaincode) getUUID()([]byte, error){
     uuid, err := exec.Command("uuidgen").Output()
     if err != nil { 
         fmt.Printf("getUUID: Error getting UUID: %s", err); 
-        return nil, errors.New("getUUID: Error getting UUID") 
+        return nil, errors.New(string(err)) 
     }
     return uuid, nil
 }
