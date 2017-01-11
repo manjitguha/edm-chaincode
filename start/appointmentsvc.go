@@ -15,8 +15,8 @@ func (t *SimpleChaincode) createAppointment(stub shim.ChaincodeStubInterface, ar
     fmt.Println("running createAppointment()")
 
 
-    if len(args) != 7 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 7. name of the variable and value to set")
+    if len(args) != 2 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the variable and value to set")
     }
 
     uuid, err := t.getUUID()
