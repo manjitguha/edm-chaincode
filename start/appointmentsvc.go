@@ -31,7 +31,7 @@ func (t *SimpleChaincode) createAppointment(stub shim.ChaincodeStubInterface, ar
     patientLastName=args[1]
     patientId_json :=  "\"patientId\":\""+patientId+"\", "      
     patientFirstName_json := "\"patientFirstName\":\""+patientFirstName+"\","
-    patientLastName_json := "\"patientLastName\":\""+patientLastName+"\""    
+    patientLastName_json := "\"patientLastName\":\""+patientLastName+"\","    
    
     patient_json := "{"+patientId_json+patientFirstName_json+patientLastName_json+"}"
 
@@ -52,14 +52,14 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, p Patie
     bytes, err := json.Marshal(p)
     if err != nil { 
         fmt.Printf("save_changes: Error converting Appointment record: %s", err); 
-        return nil, err) 
+        return nil, err 
     }
 
     err = stub.PutState(p.PatientId, bytes)
 
     if err != nil { 
         fmt.Printf("save_changes: Error storing Appointment record: %s", err); 
-        return nil, err) 
+        return nil, err
     }
 
     return bytes, nil
