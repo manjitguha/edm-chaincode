@@ -4,13 +4,13 @@ import (
     "errors"
     "fmt"
     "encoding/json"
-    "crypto/rand"
     "github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
 func (t *SimpleChaincode) createAppointment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-    var p Patient
-    var patientId, patientFirstName, patientLastName string
+    var appointment Appointment
+    var appointmentId, patientId, patientFirstName, patientLastName, providerId, providerFirstName, providerLastName, appointmentTime string
+    
     var err error
     fmt.Println("running createAppointment()")
 
@@ -19,25 +19,43 @@ func (t *SimpleChaincode) createAppointment(stub shim.ChaincodeStubInterface, ar
         return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the variable and value to set")
     }
 
-    uuid, err := t.getUUID()
+    appointmentIdByteArr, err := t.getUUID()
+    appointmentId = string(appointmentIdByteArr)
 
-    if err != nil { 
-        fmt.Printf("createAppointment: Error getting UUID: %s", err); 
+    if err != nil {
         return nil, err
     }
 
-    patientId = string(uuid)
-    patientFirstName = args[0]
-    patientLastName=args[1]
+    patientId = args[0]
+    patientFirstName = args[1]
+    patientLastName=args[2]
+    providerId = args[3]
+    providerFirstName = args[4]
+    providerLastName = args[5]
+    appointmentTime = args[6]
+
+    appointmentId_json :=  "\"appointmentId\":\""+appointmentId+"\", "   
+
     patientId_json :=  "\"patientId\":\""+patientId+"\", "      
     patientFirstName_json := "\"patientFirstName\":\""+patientFirstName+"\","
     patientLastName_json := "\"patientLastName\":\""+patientLastName+"\""    
+ 
+    providerId_json :=  "\"providerId\":\""+providerId+"\", "      
+    providerFirstName_json := "\"providerFirstName\":\""+providerFirstName+"\","
+    providerLastName_json := "\"providerLastName\":\""+providerLastName+"\""    
+      
+    appointmentTime_json :=  "\"appointmentTime\":\""+appointmentTime+"\""    
+
+
+    patient_json := "\"patient\":{"+patientId_json+patientFirstName_json+patientLastName_json+"},"
+    provider_json := "\"provider\":{"+providerId_json+providerFirstName_json+providerLastName_json+"},"
+ 
+    appointment_json := "{"+appointmentId_json+patient_json+provider_json+appointmentTime_json+"}"
    
-    patient_json := "{"+patientId_json+patientFirstName_json+patientLastName_json+"}"
 
-    err = json.Unmarshal([]byte(patient_json), &p)  
+    err = json.Unmarshal([]byte(appointment_json), &appointment)  
 
-    bytes, err  := t.save_changes(stub, p)
+    bytes, err  := t.save_changes(stub, appointment)
 
     if err != nil {
         return nil, err
@@ -48,14 +66,14 @@ func (t *SimpleChaincode) createAppointment(stub shim.ChaincodeStubInterface, ar
     return bytes, nil
 }
 
-func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, p Patient) ([]byte, error) {
-    bytes, err := json.Marshal(p)
+func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appointment Appointment) ([]byte, error) {
+    bytes, err := json.Marshal(appointment)
     if err != nil { 
         fmt.Printf("save_changes: Error converting Appointment record: %s", err); 
         return nil, err 
     }
 
-    err = stub.PutState(p.PatientId, bytes)
+    err = stub.PutState(appointment.AppointmentId, bytes)
 
     if err != nil { 
         fmt.Printf("save_changes: Error storing Appointment record: %s", err); 
@@ -65,15 +83,3 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, p Patie
     return bytes, nil
 }
 
-
-func (t *SimpleChaincode) getUUID()([]byte, error){
-     b := make([]byte, 16)
-    _, err := rand.Read(b)
-    if err != nil {
-        fmt.Println("Error: ", err)
-        return nil, err 
-    }
-    uuid := fmt.Sprintf("%X-%X-%X-%X-%X", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
-    byteArray := []byte(uuid)
-    return byteArray, nil 
-}
