@@ -80,6 +80,7 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
 
 // read - query function to read key/value pair
 func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+    var appointment Appointment
     var key, jsonResp string
     var err error
 
@@ -94,7 +95,20 @@ func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args 
         return nil, errors.New(jsonResp)
     }
 
-    return valAsbytes, nil
+    err = json.Unmarshal(valAsbytes, &appointment)  
+
+    if err != nil {
+        return nil, err
+    }
+
+    bytes, err := json.Marshal(appointment)
+   
+    if err != nil {
+        return nil, err
+    }
+
+
+    return bytes, nil
 }
 
 
