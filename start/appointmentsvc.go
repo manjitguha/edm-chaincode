@@ -15,24 +15,19 @@ func (t *SimpleChaincode) createAppointment(stub shim.ChaincodeStubInterface, ar
     fmt.Println("running createAppointment()")
 
 
-    if len(args) != 2 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the variable and value to set")
+    if len(args) != 8 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 8. name of the variable and value to set")
     }
 
-    appointmentIdByteArr, err := t.getUUID()
-    appointmentId = string(appointmentIdByteArr)
-
-    if err != nil {
-        return nil, err
-    }
-
-    patientId = args[0]
-    patientFirstName = args[1]
-    patientLastName=args[2]
-    providerId = args[3]
-    providerFirstName = args[4]
-    providerLastName = args[5]
-    appointmentTime = args[6]
+   
+    appointmentId = args[0]
+    patientId = args[1]
+    patientFirstName = args[2]
+    patientLastName=args[3]
+    providerId = args[4]
+    providerFirstName = args[5]
+    providerLastName = args[6]
+    appointmentTime = args[7]
 
     appointmentId_json :=  "\"appointmentId\":\""+appointmentId+"\", "   
 
