@@ -29,7 +29,16 @@ func (t *SimpleChaincode) createAppointment(stub shim.ChaincodeStubInterface, ar
     providerLastName = args[6]
     appointmentTime = args[7]
 
-    appointmentId_json :=  "\"appointmentId\":\""+appointmentId+"\", "   
+    appointment.AppointmentId = appointmentId
+    appointment.Patient.PatientId = patientId
+    appointment.Patient.PatientFirstName = patientFirstName
+    appointment.Patient.PatientLastName = patientLastName
+    appointment.Provider.ProviderId = providerId
+    appointment.Provider.ProviderFirstName = providerFirstName
+    appointment.Provider.ProviderLastName = providerLastName
+    appointment.AppointmentTime = appointmentTime
+
+  /*  appointmentId_json :=  "\"appointmentId\":\""+appointmentId+"\", "   
 
     patientId_json :=  "\"patientId\":\""+patientId+"\", "      
     patientFirstName_json := "\"patientFirstName\":\""+patientFirstName+"\","
@@ -49,6 +58,8 @@ func (t *SimpleChaincode) createAppointment(stub shim.ChaincodeStubInterface, ar
    
 
     err = json.Unmarshal([]byte(appointment_json), &appointment)  
+*/
+
 
     bytes, err  := t.save_changes(stub, appointment)
 
