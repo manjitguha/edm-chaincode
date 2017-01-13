@@ -68,6 +68,8 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 
     if function == "getUUID" {
         return t.getUUID()
+    } else if function == "getAppointment" {
+        return t.getAppointment(stub,args)
     }
 
     
