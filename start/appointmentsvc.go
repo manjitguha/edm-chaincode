@@ -82,7 +82,8 @@ func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args 
     key = args[1]
 
     log.Println("Key = %s", key)
-
+    log.Println("Role = %s", role)
+    
     valAsbytes, err := stub.GetState(key)
     if err != nil {
         log.Fatalln("Failed to open log file", ":", err)
