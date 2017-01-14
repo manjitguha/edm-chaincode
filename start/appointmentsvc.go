@@ -72,11 +72,18 @@ func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args 
     var key, jsonResp string
     var err error
 
+    log.Println("Printing Length")
+    log.Println("Length = %d", len(args))
+    log.Println("After Prining Length")
+    
     if len(args) != 1 {
         return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
     }
 
     key = args[0]
+
+    log.Println("Key = %s", key)
+
     valAsbytes, err := stub.GetState(key)
     if err != nil {
         jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
