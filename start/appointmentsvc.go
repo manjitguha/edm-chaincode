@@ -5,6 +5,7 @@ import (
     "fmt"
     "encoding/json"
     "github.com/hyperledger/fabric/core/chaincode/shim"
+    "log"
 )
 
 func (t *SimpleChaincode) upsertAppointment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
@@ -66,6 +67,7 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
 
 // read - query function to read key/value pair
 func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+    log.Println("Inside getAppointment")
    // var appointment Appointment
     var key, jsonResp string
     var err error
