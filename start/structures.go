@@ -32,4 +32,14 @@ type Appointment struct{
     AppointmentTime string `json:"appointmentTime"`
     DiagnosisNotes string `json:"diagnosisNotes"`
     PrescriptionNotes string `json:"prescriptionNotes"`
+    Status string `json:"status"`
 }
+
+const (
+    PAYER = "PAYER"
+    PROVIDER = "PROVIDER"
+    PHARMACY = "PHARMACY"
+    PATIENT = "PATIENT"
+    SECRETARY = "SECRETARY"
+    UNAUTHORIZED = "UNAUTHORIZED"
+)
