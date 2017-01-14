@@ -90,6 +90,8 @@ func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args 
         return nil, errors.New(jsonResp)
     }
 
+    log.Println(valAsbytes)
+
 /*    err = json.Unmarshal(valAsbytes, &appointment)  
 
     if err != nil {
