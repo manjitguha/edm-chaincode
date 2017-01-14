@@ -83,6 +83,12 @@ func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args 
 
     log.Println("Key = %s", key)
     log.Println("Role = %s", role)
+
+
+    if role != PAYER && role != PROVIDER && role != PHARMACY && role != PATIENT && role != SECRETARY {
+        jsonResp = "{\"Error\":\"Role doesn't exist " + role + "\"}"
+        return nil, errors.New(jsonResp)
+    } 
     
     valAsbytes, err := stub.GetState(key)
     if err != nil {
@@ -94,16 +100,13 @@ func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args 
     log.Println(valAsbytes)
 
 
+
     err = json.Unmarshal(valAsbytes, &appointment)  
 
     if err != nil {
         return nil, err
     }
-
-    if role != PAYER && role != PROVIDER && role != PHARMACY && role != PATIENT && role != SECRETARY {
-        jsonResp = "{\"Error\":\"Role doesn't exist " + role + "\"}"
-        return nil, errors.New(jsonResp)
-    } else if role == SECRETARY {
+    if role == SECRETARY {
         appointment.DiagnosisNotes = UNAUTHORIZED
         appointment.PrescriptionNotes = UNAUTHORIZED
     } else if role  == PHARMACY {
