@@ -67,7 +67,7 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
 // read - query function to read key/value pair
 func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
     log.Println("Printing Length")
-    //var appointment Appointment
+    var appointment Appointment
     var key, role, jsonResp string
     var err error
 
@@ -100,7 +100,10 @@ func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args 
         return nil, err
     }
 
-    if role == SECRETARY {
+    if role != PAYER && role != PROVIDER && role != PHARMACY && role != PATIENT && role != SECRETARY {
+        jsonResp = "{\"Error\":\"Role doesn't exist " + role + "\"}"
+        return nil, errors.New(jsonResp)
+    } else if role == SECRETARY {
         appointment.DiagnosisNotes = UNAUTHORIZED
         appointment.PrescriptionNotes = UNAUTHORIZED
     } else if role  == PHARMACY {
