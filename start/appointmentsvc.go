@@ -54,14 +54,18 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
         fmt.Printf("save_changes: Error converting Appointment record: %s", err); 
         return nil, err 
     }
-
+    log.Println("Saving Appointment")
+   
+    log.Println("AppointmentId = %s", appointment.AppointmentId)
+   
     err = stub.PutState(appointment.AppointmentId, bytes)
 
     if err != nil { 
+        log.Println(err)
         fmt.Printf("save_changes: Error storing Appointment record: %s", err); 
         return nil, err
     }
-
+    log.Println(bytes)
     return bytes, nil
 }
 
