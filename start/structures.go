@@ -13,7 +13,6 @@ type Patient struct{
     PatientLastName string `json:"patientLastName"`
 }
 
-
 //=============================================================================================================================
 // Provider - Defines the structure of Provider entity
 //=============================================================================================================================
@@ -31,4 +30,6 @@ type Appointment struct{
     Provider Provider `json:"provider"`
     Patient Patient `json:"patient"`
     AppointmentTime string `json:"appointmentTime"`
+    DiagnosisNotes string `json:"diagnosisNotes"`
+    PrescriptionNotes string `json:"prescriptionNotes"`
 }

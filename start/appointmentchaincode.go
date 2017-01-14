@@ -51,8 +51,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
     // Handle different functions
     if function == "init" {
         return t.Init(stub, "init", args)
-    } else if function == "createAppointment" {                           
-        return t.createAppointment(stub, args)
+    } else if function == "upsertAppointment" {                           
+        return t.upsertAppointment(stub, args)
     }
 
     fmt.Println("invoke did not find func: " + function)

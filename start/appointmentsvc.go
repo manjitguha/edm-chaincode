@@ -7,60 +7,35 @@ import (
     "github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
-func (t *SimpleChaincode) createAppointment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func (t *SimpleChaincode) upsertAppointment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
     var appointment Appointment
-    var appointmentId, patientId, patientFirstName, patientLastName, providerId, providerFirstName, providerLastName, appointmentTime string
     
     var err error
     fmt.Println("running createAppointment()")
 
 
-    if len(args) != 8 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 8. name of the variable and value to set")
+    if len(args) != 10 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 10. name of the variable and value to set")
     }
 
-   
-    appointmentId = args[0]
-    patientId = args[1]
-    patientFirstName = args[2]
-    patientLastName=args[3]
-    providerId = args[4]
-    providerFirstName = args[5]
-    providerLastName = args[6]
-    appointmentTime = args[7]
 
-    appointment.AppointmentId = appointmentId
-    appointment.Patient.PatientId = patientId
-    appointment.Patient.PatientFirstName = patientFirstName
-    appointment.Patient.PatientLastName = patientLastName
-    appointment.Provider.ProviderId = providerId
-    appointment.Provider.ProviderFirstName = providerFirstName
-    appointment.Provider.ProviderLastName = providerLastName
-    appointment.AppointmentTime = appointmentTime
+    appointment.AppointmentId = args[0]
+    appointment.Patient.PatientId = args[1]
+    appointment.Patient.PatientFirstName = args[2]
+    appointment.Patient.PatientLastName = args[3]
+    appointment.Provider.ProviderId = args[4]
+    appointment.Provider.ProviderFirstName = args[5]
+    appointment.Provider.ProviderLastName = args[6]
+    appointment.AppointmentTime = args[7]
 
-  /*  appointmentId_json :=  "\"appointmentId\":\""+appointmentId+"\", "   
+    if args[8] != "" {
+        appointment.DiagnosisNotes = args[8]
+    }
 
-    patientId_json :=  "\"patientId\":\""+patientId+"\", "      
-    patientFirstName_json := "\"patientFirstName\":\""+patientFirstName+"\","
-    patientLastName_json := "\"patientLastName\":\""+patientLastName+"\""    
- 
-    providerId_json :=  "\"providerId\":\""+providerId+"\", "      
-    providerFirstName_json := "\"providerFirstName\":\""+providerFirstName+"\","
-    providerLastName_json := "\"providerLastName\":\""+providerLastName+"\""    
-      
-    appointmentTime_json :=  "\"appointmentTime\":\""+appointmentTime+"\""    
-
-
-    patient_json := "\"patient\":{"+patientId_json+patientFirstName_json+patientLastName_json+"},"
-    provider_json := "\"provider\":{"+providerId_json+providerFirstName_json+providerLastName_json+"},"
- 
-    appointment_json := "{"+appointmentId_json+patient_json+provider_json+appointmentTime_json+"}"
-   
-
-    err = json.Unmarshal([]byte(appointment_json), &appointment)  
-*/
-
-
+    if args[9] != "" {
+        appointment.PrescriptionNotes = args[9]
+    }
+    
     bytes, err  := t.save_changes(stub, appointment)
 
     if err != nil {
