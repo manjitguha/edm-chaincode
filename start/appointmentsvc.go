@@ -67,7 +67,7 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
 // read - query function to read key/value pair
 func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
     log.Println("Printing Length")
-    var appointment Appointment
+    //var appointment Appointment
     var key, role, jsonResp string
     var err error
 
