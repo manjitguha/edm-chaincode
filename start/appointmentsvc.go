@@ -71,14 +71,20 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
         return nil, err
     }
 
-     err = json.Unmarshal(activeUUIDsBytes, &activeUUIDs)
-     if err != nil { 
+    err = json.Unmarshal(activeUUIDsBytes, &activeUUIDs)
+    if err != nil { 
         log.Println(err)
         fmt.Printf("save_changes: Error unmarshalling activeUUIDs: %s", err); 
         return nil, err
     }
 
+
+    log.Println("Printing uuidArray")
+    log.Println(activeUUIDs)
+
     activeUUIDs.uuidArray= append(activeUUIDs.uuidArray, appointment.AppointmentId)
+
+    log.Println(activeUUIDs)
 
     activeUUIDsBytes, err = json.Marshal(activeUUIDs)
    
@@ -153,6 +159,9 @@ func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args 
 
 func (t *SimpleChaincode) getActiveUUIDs(stub shim.ChaincodeStubInterface, args []string)([]byte, error){
     activeUUIDsBytes, err := stub.GetState("activeUUIDs");
+    log.Println("Printing ActiveUUIDs")
+
+    log.Println(activeUUIDsBytes)
 
     if err != nil { 
         log.Println(err)
