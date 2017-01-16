@@ -44,6 +44,8 @@ func (t *SimpleChaincode) upsertAppointment(stub shim.ChaincodeStubInterface, ar
 }
 
 func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appointment Appointment) ([]byte, error) {
+    var activeUUIDs ActiveUUIDs
+
     bytes, err := json.Marshal(appointment)
     if err != nil { 
         fmt.Printf("save_changes: Error converting Appointment record: %s", err); 
@@ -60,6 +62,31 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
         fmt.Printf("save_changes: Error storing Appointment record: %s", err); 
         return nil, err
     }
+
+    activeUUIDsBytes, err := stub.GetState("activeUUIDs");
+
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error fetching activeUUIDs: %s", err); 
+        return nil, err
+    }
+
+     err = json.Unmarshal(activeUUIDsBytes, &activeUUIDs)
+     if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error unmarshalling activeUUIDs: %s", err); 
+        return nil, err
+    }
+
+    activeUUIDs.uuidArray= append(activeUUIDs.uuidArray, appointment.AppointmentId)
+
+    activeUUIDsBytes, err = json.Marshal(activeUUIDs)
+   
+    err = stub.PutState("activeUUIDs", activeUUIDsBytes)
+    if err != nil {
+        return nil, err
+    }
+
     log.Println(bytes)
     return bytes, nil
 }
@@ -124,3 +151,13 @@ func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args 
 }
 
 
+func (t *SimpleChaincode) getActiveUUIDs(stub shim.ChaincodeStubInterface, args []string)([]byte, error){
+    activeUUIDsBytes, err := stub.GetState("activeUUIDs");
+
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error fetching activeUUIDs: %s", err); 
+        return nil, err
+    }
+    return activeUUIDsBytes, nil 
+}

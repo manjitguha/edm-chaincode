@@ -4,6 +4,7 @@ import (
     "errors"
     "fmt"
     "github.com/hyperledger/fabric/core/chaincode/shim"
+    "encoding/json"
 )
 
 
@@ -17,26 +18,22 @@ func main() {
     }
 }
 
-/*func main(){
-     b := make([]byte, 16)
-    _, err := rand.Read(b)
-    if err != nil {
-        fmt.Println("Error: ", err)
-        return
-    }
-    uuid := fmt.Sprintf("%X-%X-%X-%X-%X", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
-
-    fmt.Println(string(uuid))
-    fmt.Println(err)
-}*/
 
 // Init resets all the things
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
     if len(args) != 1 {
         return nil, errors.New("Incorrect number of arguments. Expecting 1")
     }
+    var activeUUIDs ActiveUUIDs;
 
     err := stub.PutState("hello_world", []byte(args[0]))
+    if err != nil {
+        return nil, err
+    }
+
+    activeUUIDsBytes, err := json.Marshal(activeUUIDs)
+   
+    err = stub.PutState("activeUUIDs", activeUUIDsBytes)
     if err != nil {
         return nil, err
     }
@@ -70,6 +67,8 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
         return t.getUUID()
     } else if function == "getAppointment" {
         return t.getAppointment(stub,args)
+    } else if function == "getActiveUUIDs" {
+        return t.getActiveUUIDs(stub,args)
     }
 
     

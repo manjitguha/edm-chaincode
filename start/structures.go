@@ -35,6 +35,10 @@ type Appointment struct{
     Status string `json:"status"`
 }
 
+type ActiveUUIDs struct{
+    uuidArray []string `json:"uuidArray"`
+}
+
 const (
     PAYER = "PAYER"
     PROVIDER = "PROVIDER"
@@ -43,3 +47,4 @@ const (
     SECRETARY = "SECRETARY"
     UNAUTHORIZED = "UNAUTHORIZED"
 )
+
