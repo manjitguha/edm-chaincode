@@ -40,9 +40,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
     }
 
     log.Println("Calling GetState:  uuidArray")
-
-    activeUUIDsBytesNew, err := stub.GetState("activeUUIDs");
-    err = json.Unmarshal(activeUUIDsBytesNew, &activeUUIDsNew)
+    err = json.Unmarshal(activeUUIDsBytes, &activeUUIDsNew)
 
     log.Println("Printing uuidArray")
     log.Println(activeUUIDsNew)
