@@ -39,6 +39,8 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
         return nil, err
     }
 
+    log.Println("Calling GetState:  uuidArray")
+
     activeUUIDsBytesNew, err := stub.GetState("activeUUIDs");
     err = json.Unmarshal(activeUUIDsBytesNew, &activeUUIDsNew)
 
