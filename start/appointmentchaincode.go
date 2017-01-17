@@ -3,8 +3,9 @@ package main
 import (
     "errors"
     "fmt"
-    "github.com/hyperledger/fabric/core/chaincode/shim"
     "encoding/json"
+    "github.com/hyperledger/fabric/core/chaincode/shim"
+    "log"
 )
 
 
@@ -24,22 +25,26 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
     if len(args) != 1 {
         return nil, errors.New("Incorrect number of arguments. Expecting 1")
     }
+
     var activeUUIDs ActiveUUIDs;
+    var activeUUIDsNew ActiveUUIDs;
     activeUUIDs.uuidArray= append(activeUUIDs.uuidArray, "Hello")
     activeUUIDs.uuidArray= append(activeUUIDs.uuidArray, "World")
 
-    err := stub.PutState("hello_world", []byte(args[0]))
-    if err != nil {
-        return nil, err
-    }
-
     activeUUIDsBytes, err := json.Marshal(activeUUIDs)
-   
+    log.Println("Saving")
     err = stub.PutState("activeUUIDs", activeUUIDsBytes)
+    log.Println("Saved")
     if err != nil {
         return nil, err
     }
 
+    activeUUIDsBytesNew, err := stub.GetState("activeUUIDs");
+    err = json.Unmarshal(activeUUIDsBytesNew, &activeUUIDsNew)
+
+    log.Println("Printing uuidArray")
+    log.Println(activeUUIDsNew)
+    
     return nil, nil
 }
 
