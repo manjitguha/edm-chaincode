@@ -27,12 +27,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
     }
 
     uuidArray := []string{}
-    uuidArrayNew := []string{}
-    
-
-    uuidArray= append(uuidArray, "Hello")
-    uuidArrayNew= append(uuidArray, "World")
-
+   
     UUIDsBytes, err := json.Marshal(uuidArray)
     log.Println("Saving")
     err = stub.PutState("activeUUIDs", UUIDsBytes)
@@ -41,12 +36,6 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
         return nil, err
     }
 
-    log.Println("Calling GetState:  uuidArray")
-    err = json.Unmarshal(UUIDsBytes, &uuidArrayNew)
-
-    log.Println("Printing uuidArray")
-    log.Println(uuidArrayNew)
-    
     return nil, nil
 }
 

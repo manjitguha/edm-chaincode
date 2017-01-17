@@ -44,6 +44,8 @@ func (t *SimpleChaincode) upsertAppointment(stub shim.ChaincodeStubInterface, ar
 }
 
 func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appointment Appointment) ([]byte, error) {
+    uuidArray := []string{}
+  
     bytes, err := json.Marshal(appointment)
     if err != nil { 
         fmt.Printf("save_changes: Error converting Appointment record: %s", err); 
@@ -52,12 +54,38 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
     log.Println("Saving Appointment")
    
     log.Println("AppointmentId = %s", appointment.AppointmentId)
-   
+    
     err = stub.PutState(appointment.AppointmentId, bytes)
 
     if err != nil { 
         log.Println(err)
         fmt.Printf("save_changes: Error storing Appointment record: %s", err); 
+        return nil, err
+    }
+
+    activeUUIDsBytes, err := stub.GetState("activeUUIDs");
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error fetching activeUUIDs: %s", err); 
+        return nil, err
+    }
+
+    err = json.Unmarshal(activeUUIDsBytes, &uuidArray)
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error unmarshalling activeUUIDs: %s", err); 
+        return nil, err
+    }
+    log.Println("Printing uuidArray")
+    log.Println(uuidArray)
+
+    uuidArray= append(uuidArray, appointment.AppointmentId)
+
+    UUIDsBytes, err := json.Marshal(uuidArray)
+    log.Println("Saving")
+    err = stub.PutState("activeUUIDs", UUIDsBytes)
+    log.Println("Saved")
+    if err != nil {
         return nil, err
     }
 
@@ -126,34 +154,12 @@ func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args 
 
 
 func (t *SimpleChaincode) getActiveUUIDs(stub shim.ChaincodeStubInterface, args []string)([]byte, error){
-    var activeUUIDs ActiveUUIDs
     activeUUIDsBytes, err := stub.GetState("activeUUIDs");
-    log.Println("Printing ActiveUUIDs")
-
-    log.Println(activeUUIDsBytes)
-
     if err != nil { 
         log.Println(err)
         fmt.Printf("save_changes: Error fetching activeUUIDs: %s", err); 
         return nil, err
     }
-
-    err = json.Unmarshal(activeUUIDsBytes, &activeUUIDs)
-    if err != nil { 
-        log.Println(err)
-        fmt.Printf("save_changes: Error unmarshalling activeUUIDs: %s", err); 
-        return nil, err
-    }
-
-
-    log.Println("Printing uuidArray")
-    log.Println(activeUUIDs)
-
-    activeUUIDsBytes, err = json.Marshal(activeUUIDs)
-    if err != nil {
-        return nil, err
-    }
-
 
     return activeUUIDsBytes, nil 
 }
