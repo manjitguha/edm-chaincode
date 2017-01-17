@@ -26,24 +26,26 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
         return nil, errors.New("Incorrect number of arguments. Expecting 1")
     }
 
-    var activeUUIDs ActiveUUIDs;
-    var activeUUIDsNew ActiveUUIDs;
-    activeUUIDs.uuidArray= append(activeUUIDs.uuidArray, "Hello")
-    activeUUIDs.uuidArray= append(activeUUIDs.uuidArray, "World")
+    uuidArray := []string{}
+    uuidArrayNew := []string{}
+    
 
-    activeUUIDsBytes, err := json.Marshal(activeUUIDs)
+    uuidArray= append(uuidArray, "Hello")
+    uuidArrayNew= append(uuidArray, "World")
+
+    UUIDsBytes, err := json.Marshal(uuidArray)
     log.Println("Saving")
-    err = stub.PutState("activeUUIDs", activeUUIDsBytes)
+    err = stub.PutState("activeUUIDs", UUIDsBytes)
     log.Println("Saved")
     if err != nil {
         return nil, err
     }
 
     log.Println("Calling GetState:  uuidArray")
-    err = json.Unmarshal(activeUUIDsBytes, &activeUUIDsNew)
+    err = json.Unmarshal(UUIDsBytes, &uuidArrayNew)
 
     log.Println("Printing uuidArray")
-    log.Println(activeUUIDsNew)
+    log.Println(uuidArrayNew)
     
     return nil, nil
 }
