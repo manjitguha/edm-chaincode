@@ -13,6 +13,7 @@ func (t *SimpleChaincode) upsertAppointment(stub shim.ChaincodeStubInterface, ar
     
     var err error
     fmt.Println("running createAppointment()")
+    fmt.Println("Changing Blockchain createAppointment()")
 
 
     if len(args) != 11 {
