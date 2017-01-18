@@ -79,15 +79,28 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
     log.Println("Printing uuidArray")
     log.Println(uuidArray)
 
-    uuidArray= append(uuidArray, appointment.AppointmentId)
+    appointmentPresent := false
 
-    UUIDsBytes, err := json.Marshal(uuidArray)
-    log.Println("Saving")
-    err = stub.PutState("activeUUIDs", UUIDsBytes)
-    log.Println("Saved")
-    if err != nil {
-        return nil, err
+    for i := 0; i < len(uuidArray); i++ {
+        if uuidArray[i] == appointment.AppointmentId {
+            appointmentPresent = true
+            break
+        }
     }
+
+    if appointmentPresent == true {
+        uuidArray= append(uuidArray, appointment.AppointmentId)
+
+        UUIDsBytes, err := json.Marshal(uuidArray)
+        log.Println("Saving")
+        err = stub.PutState("activeUUIDs", UUIDsBytes)
+        log.Println("Saved")
+        if err != nil {
+            return nil, err
+        }
+    }
+
+    
 
     log.Println(bytes)
     return bytes, nil
@@ -160,6 +173,5 @@ func (t *SimpleChaincode) getActiveUUIDs(stub shim.ChaincodeStubInterface, args 
         fmt.Printf("save_changes: Error fetching activeUUIDs: %s", err); 
         return nil, err
     }
-
     return activeUUIDsBytes, nil 
 }
