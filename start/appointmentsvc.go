@@ -88,7 +88,7 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
         }
     }
 
-    if appointmentPresent == true {
+    if appointmentPresent == false {
         uuidArray= append(uuidArray, appointment.AppointmentId)
 
         UUIDsBytes, err := json.Marshal(uuidArray)
