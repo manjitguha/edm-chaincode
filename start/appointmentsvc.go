@@ -218,7 +218,10 @@ func (t *SimpleChaincode) saveUUIDsForPatient(stub shim.ChaincodeStubInterface, 
     log.Println("Before unmarshalling", len(patientBytes))
     if len(patientBytes) >0 {
         err = json.Unmarshal(patientBytes, &patient)
-    } 
+    } else{
+        patient.PatientId = appointment.PatientId
+        patient.UUIDMap = make(map[string]string);
+    }
     log.Println("After unmarshalling")
 
     if err != nil { 
@@ -257,6 +260,9 @@ func (t *SimpleChaincode) saveUUIDsForPharmacy(stub shim.ChaincodeStubInterface,
     log.Println("Before unmarshalling", len(pharmacyBytes))
     if len(pharmacyBytes) >0 {
         err = json.Unmarshal(pharmacyBytes, &pharmacy)
+    } else {
+        pharmacy.PharmacyId = appointment.PharmacyId
+        pharmacy.UUIDMap = make(map[string]string);
     } 
     log.Println("After unmarshalling")
 
@@ -296,6 +302,9 @@ func (t *SimpleChaincode) saveUUIDsForSecretory(stub shim.ChaincodeStubInterface
     log.Println("Before unmarshalling", len(secretoryBytes))
     if len(secretoryBytes) >0 {
         err = json.Unmarshal(secretoryBytes, &secretory)
+    } else {
+        secretory.SecretoryId = appointment.SecretoryId
+        secretory.UUIDMap = make(map[string]string);
     } 
     log.Println("After unmarshalling")
 
@@ -335,6 +344,9 @@ func (t *SimpleChaincode) saveUUIDsForLaboratory(stub shim.ChaincodeStubInterfac
     log.Println("Before unmarshalling", len(laboratoryBytes))
     if len(laboratoryBytes) >0 {
         err = json.Unmarshal(laboratoryBytes, &laboratory)
+    } else {
+        laboratory.LaboratoryId = appointment.LaboratoryId
+        laboratory.UUIDMap = make(map[string]string);
     } 
     log.Println("After unmarshalling")
 
