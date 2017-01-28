@@ -67,7 +67,10 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
         return t.getAppointment(stub,args)
     } else if function == "getActiveUUIDs" {
         return t.getActiveUUIDs(stub,args)
+    } else if function == "getActiveUUIDsForProviders" {
+        return t.getActiveUUIDsForProviders(stub,args)
     }
+
 
     
     fmt.Println("query did not find func: " + function)
