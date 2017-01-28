@@ -99,7 +99,6 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
 func (t *SimpleChaincode) saveUUIDsForProvider(stub shim.ChaincodeStubInterface, appointment Appointment) ([]byte, error) {
     var provider Provider
     log.Println("Inside saveUUIDsForProvider", appointment.ProviderId)
-       
 
     providerBytes, err := stub.GetState(appointment.ProviderId);
     if err != nil { 
@@ -108,7 +107,10 @@ func (t *SimpleChaincode) saveUUIDsForProvider(stub shim.ChaincodeStubInterface,
         return nil, err
     }
 
+    log.Println("Before unmarshalling", providerBytes)
     err = json.Unmarshal(providerBytes, &provider)
+    log.Println("After unmarshalling")
+
     if err != nil { 
         log.Println(err)
         fmt.Printf("save_changes: Error unmarshalling activeUUIDs: %s", err); 
