@@ -117,7 +117,7 @@ func (t *SimpleChaincode) saveUUIDsForProvider(stub shim.ChaincodeStubInterface,
             dateSlot.TimeSlotMap = make(map[string]string);
             dateSlot.TimeSlotMap[appointment.AppointmentTime] = appointment.AppointmentId
             provider.AppointmentSlotMap[appointment.AppointmentDate] = dateSlot
-        }else if provider.UUIDMap[appointment.AppointmentId] == ""{
+        }else if provider.UUIDMap[appointment.AppointmentId] != ""{
             provider.AppointmentSlotMap[appointment.AppointmentDate].TimeSlotMap[appointment.AppointmentTime] = appointment.AppointmentId
         }else {
             provider.AppointmentSlotMap[appointment.AppointmentDate].TimeSlotMap[provider.UUIDMap[appointment.AppointmentId]] = ""
