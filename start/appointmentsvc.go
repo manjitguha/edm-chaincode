@@ -107,8 +107,14 @@ func (t *SimpleChaincode) saveUUIDsForProvider(stub shim.ChaincodeStubInterface,
         return nil, err
     }
 
-    log.Println("Before unmarshalling", providerBytes)
-    err = json.Unmarshal(providerBytes, &provider)
+    log.Println("Before unmarshalling", len(providerBytes))
+    if len(providerBytes) >0 {
+        err = json.Unmarshal(providerBytes, &provider)
+    }
+    else{
+        provider.ProviderId = appointment.ProviderId
+        provider.uuidArray = []string{}
+    }
     log.Println("After unmarshalling")
 
     if err != nil { 
@@ -123,6 +129,7 @@ func (t *SimpleChaincode) saveUUIDsForProvider(stub shim.ChaincodeStubInterface,
 
     for i := 0; i < len(provider.uuidArray); i++ {
         if provider.uuidArray[i] == appointment.AppointmentId {
+            log.Println("Appointment present")
             appointmentPresent = true
             break
         }
