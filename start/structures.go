@@ -27,15 +27,15 @@ type Appointment struct{
 // Patient - Defines the structure of Patient entity
 //=============================================================================================================================
 type Patient struct{
-    PatientId string `json:"patientId"`
-    UUIDArray []string `json:"uuidArray"`
+    PatientId string `json:"_id"`
+    UUIDMap map[string]string `json:"uuidMap"`
 }
 
 //=============================================================================================================================
 // Provider - Defines the structure of Provider entity
 //=============================================================================================================================
 type Provider struct{
-    ProviderId string `json:"providerId"`
+    ProviderId string `json:"_id"`
     UUIDMap map[string]string `json:"uuidMap"`
     AppointmentSlotMap map[string]DateSlot `json:"appointmentSlotMap"`
 }
@@ -50,16 +50,16 @@ type DateSlot struct{
 // Secretory - Defines the structure of Secretory entity
 //=============================================================================================================================
 type Secretory struct{
-    SecretoryId string `json:"secretoryId"`
-    UUIDArray []string `json:"uuidArray"`
+    SecretoryId string `json:"_id"`
+    UUIDMap map[string]string `json:"uuidMap"`
 }
 
 //=============================================================================================================================
 // Pharmacy - Defines the structure of Pharmacy entity
 //=============================================================================================================================
 type Pharmacy struct{
-    PharmacyId string `json:"pharmacyId"`
-    UUIDArray []string `json:"uuidArray"`
+    PharmacyId string `json:"_id"`
+    UUIDMap map[string]string `json:"uuidMap"`
 }
 
 
@@ -67,8 +67,8 @@ type Pharmacy struct{
 // Laboratory - Defines the structure of Pharmacy entity
 //=============================================================================================================================
 type Laboratory struct{
-    LaboratoryId string `json:"laboratoryId"`
-    UUIDArray []string `json:"uuidArray"`
+    LaboratoryId string `json:"_id"`
+    UUIDMap map[string]string `json:"uuidMap"`
 }
 
 

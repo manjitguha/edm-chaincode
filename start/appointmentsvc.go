@@ -17,18 +17,22 @@ func (t *SimpleChaincode) upsertAppointment(stub shim.ChaincodeStubInterface, ar
     fmt.Println("Changing Blockchain During Meeting()")
 
 
-    if len(args) != 8 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 7. name of the variable and value to set")
+    if len(args) != 13 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 13. name of the variable and value to set")
     }
 
     appointment.AppointmentId = args[0]
     appointment.PatientId = args[1]
     appointment.ProviderId = args[2]
-    appointment.AppointmentDate = args[3]
-    appointment.AppointmentTime = args[4]
-    appointment.DiagnosisNotes = args[5]
-    appointment.PrescriptionNotes = args[6]
-    appointment.Status = args[7]
+    appointment.ReferralProviderId = args[3]
+    appointment.PharmacyId = args[4]
+    appointment.SecretoryId = args[5]
+    appointment.LaboratoryId = args[6]
+    appointment.AppointmentDate = args[7]
+    appointment.AppointmentTime = args[8]
+    appointment.DiagnosisNotes = args[10]
+    appointment.PrescriptionNotes = args[11]
+    appointment.Status = args[12]
 
     bytes, err  := t.save_changes(stub, appointment)
 
@@ -73,22 +77,63 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
         }
         log.Println(providerBytes)
     }
-    /*if appointment.PatientId != nil {
-        activeUUIDsBytes, err  = t.saveUUIDsForPatient(stub, appointment)
+    if appointment.PatientId != "" {
+        log.Println("Inside appointment.PatientId != \"\" ", appointment.PatientId)
+   
+        patientBytes, err  := t.saveUUIDsForPatient(stub, appointment)
+        if err != nil { 
+            log.Println(err)
+            fmt.Printf("save_changes: Error storing Appointment record: %s", err); 
+            return nil, err
+        }
+        log.Println(patientBytes)
     }
-    if appointment.PharmacyId != nil {
-        activeUUIDsBytes, err  = t.saveUUIDsForPharmacy(stub, appointment)
+    if appointment.PharmacyId != "" {
+        log.Println("Inside appointment.PharmacyId != \"\" ", appointment.PharmacyId)
+   
+        pharmacyBytes, err  := t.saveUUIDsForPharmacy(stub, appointment)
+        if err != nil { 
+            log.Println(err)
+            fmt.Printf("save_changes: Error storing Appointment record: %s", err); 
+            return nil, err
+        }
+        log.Println(pharmacyBytes)
     }
-    if appointment.SecretoryId != nil {
-        activeUUIDsBytes, err  = t.saveUUIDsForSecretory(stub, appointment)
+    if appointment.SecretoryId != "" {
+        log.Println("Inside appointment.SecretoryId != \"\" ", appointment.SecretoryId)
+   
+        secretoryBytes, err  := t.saveUUIDsForSecretory(stub, appointment)
+        if err != nil { 
+            log.Println(err)
+            fmt.Printf("save_changes: Error storing Appointment record: %s", err); 
+            return nil, err
+        }
+        log.Println(secretoryBytes)
     }
-    if appointment.LaboratoryId != nil {
-        activeUUIDsBytes, err  = t.saveUUIDsForLaboratory(stub, appointment)
+    if appointment.LaboratoryId != "" {
+        log.Println("Inside appointment.LaboratoryId != \"\" ", appointment.LaboratoryId)
+   
+        laboratoryBytes, err  := t.saveUUIDsForLaboratory(stub, appointment)
+        if err != nil { 
+            log.Println(err)
+            fmt.Printf("save_changes: Error storing Appointment record: %s", err); 
+            return nil, err
+        }
+        log.Println(laboratoryBytes)
     }
-    if appointment.ReferralProviderId != nil {
-        activeUUIDsBytes, err  = t.saveUUIDsReferralProvider(stub, appointment)
+    if appointment.ReferralProviderId != "" {
+        log.Println("Inside appointment.ReferralProviderId != \"\" ", appointment.ReferralProviderId)
+        
+        referralProviderBytes, err  := t.saveUUIDsForProvider(stub, appointment)
+        if err != nil { 
+            log.Println(err)
+            fmt.Printf("save_changes: Error storing Appointment record: %s", err); 
+            return nil, err
+        }
+        log.Println(referralProviderBytes)
+
     }
-*/
+
     if err != nil {
         return nil, err
     }
@@ -157,6 +202,163 @@ func (t *SimpleChaincode) saveUUIDsForProvider(stub shim.ChaincodeStubInterface,
     return providerBytes, nil
 }
 
+
+
+func (t *SimpleChaincode) saveUUIDsForPatient(stub shim.ChaincodeStubInterface, appointment Appointment) ([]byte, error) {
+    var patient Patient
+    log.Println("Inside saveUUIDsForPatient", appointment.PatientId)
+
+    patientBytes, err := stub.GetState(appointment.PatientId);
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error fetching activeUUIDs: %s", err); 
+        return nil, err
+    }
+
+    log.Println("Before unmarshalling", len(patientBytes))
+    if len(patientBytes) >0 {
+        err = json.Unmarshal(patientBytes, &patient)
+    } 
+    log.Println("After unmarshalling")
+
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error unmarshalling activeUUIDs: %s", err); 
+        return nil, err
+    }
+    log.Println("Printing uuidMap")
+    log.Println(patient.UUIDMap)
+
+    patient.UUIDMap[appointment.AppointmentId] = appointment.AppointmentTime
+    log.Println(patient)
+    UUIDsBytes, err := json.Marshal(patient)
+    log.Println("Saving")
+    err = stub.PutState(appointment.PatientId, UUIDsBytes)
+    log.Println("Saved")
+    
+    if err != nil {
+        return nil, err
+    }
+
+    return patientBytes, nil
+}
+
+func (t *SimpleChaincode) saveUUIDsForPharmacy(stub shim.ChaincodeStubInterface, appointment Appointment) ([]byte, error) {
+    var pharmacy Pharmacy
+    log.Println("Inside saveUUIDsForPatient", appointment.PharmacyId)
+
+    pharmacyBytes, err := stub.GetState(appointment.PharmacyId);
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error fetching activeUUIDs: %s", err); 
+        return nil, err
+    }
+
+    log.Println("Before unmarshalling", len(pharmacyBytes))
+    if len(pharmacyBytes) >0 {
+        err = json.Unmarshal(pharmacyBytes, &pharmacy)
+    } 
+    log.Println("After unmarshalling")
+
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error unmarshalling activeUUIDs: %s", err); 
+        return nil, err
+    }
+    log.Println("Printing uuidMap")
+    log.Println(pharmacy.UUIDMap)
+
+    pharmacy.UUIDMap[appointment.AppointmentId] = appointment.AppointmentTime
+    log.Println(pharmacy)
+    UUIDsBytes, err := json.Marshal(pharmacy)
+    log.Println("Saving")
+    err = stub.PutState(appointment.PharmacyId, UUIDsBytes)
+    log.Println("Saved")
+    
+    if err != nil {
+        return nil, err
+    }
+
+    return pharmacyBytes, nil
+}
+
+func (t *SimpleChaincode) saveUUIDsForSecretory(stub shim.ChaincodeStubInterface, appointment Appointment) ([]byte, error) {
+    var secretory Secretory
+    log.Println("Inside saveUUIDsForSecretory", appointment.SecretoryId)
+
+    secretoryBytes, err := stub.GetState(appointment.SecretoryId);
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error fetching activeUUIDs: %s", err); 
+        return nil, err
+    }
+
+    log.Println("Before unmarshalling", len(secretoryBytes))
+    if len(secretoryBytes) >0 {
+        err = json.Unmarshal(secretoryBytes, &secretory)
+    } 
+    log.Println("After unmarshalling")
+
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error unmarshalling activeUUIDs: %s", err); 
+        return nil, err
+    }
+    log.Println("Printing uuidMap")
+    log.Println(secretory.UUIDMap)
+
+    secretory.UUIDMap[appointment.AppointmentId] = appointment.AppointmentTime
+    log.Println(secretory)
+    UUIDsBytes, err := json.Marshal(secretory)
+    log.Println("Saving")
+    err = stub.PutState(appointment.SecretoryId, UUIDsBytes)
+    log.Println("Saved")
+    
+    if err != nil {
+        return nil, err
+    }
+
+    return secretoryBytes, nil
+}
+
+func (t *SimpleChaincode) saveUUIDsForLaboratory(stub shim.ChaincodeStubInterface, appointment Appointment) ([]byte, error) {
+    var laboratory Laboratory
+    log.Println("Inside saveUUIDsForLaboratory", appointment.LaboratoryId)
+
+    laboratoryBytes, err := stub.GetState(appointment.LaboratoryId);
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error fetching activeUUIDs: %s", err); 
+        return nil, err
+    }
+
+    log.Println("Before unmarshalling", len(laboratoryBytes))
+    if len(laboratoryBytes) >0 {
+        err = json.Unmarshal(laboratoryBytes, &laboratory)
+    } 
+    log.Println("After unmarshalling")
+
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error unmarshalling activeUUIDs: %s", err); 
+        return nil, err
+    }
+    log.Println("Printing uuidMap")
+    log.Println(laboratory.UUIDMap)
+
+    laboratory.UUIDMap[appointment.AppointmentId] = appointment.AppointmentTime
+    log.Println(laboratory)
+    UUIDsBytes, err := json.Marshal(laboratory)
+    log.Println("Saving")
+    err = stub.PutState(appointment.LaboratoryId, UUIDsBytes)
+    log.Println("Saved")
+    
+    if err != nil {
+        return nil, err
+    }
+
+    return laboratoryBytes, nil
+}
 
 // read - query function to read key/value pair
 func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
@@ -228,13 +430,13 @@ func (t *SimpleChaincode) getActiveUUIDs(stub shim.ChaincodeStubInterface, args 
     return activeUUIDsBytes, nil 
 }
 
-func (t *SimpleChaincode) getActiveUUIDsForProviders(stub shim.ChaincodeStubInterface, args []string)([]byte, error){
-    providerId := args[0]
-    providerBytes, err := stub.GetState(providerId);
+func (t *SimpleChaincode) getActiveUUIDsForID(stub shim.ChaincodeStubInterface, args []string)([]byte, error){
+    id := args[0]
+    bytes, err := stub.GetState(id);
     if err != nil { 
         log.Println(err)
         fmt.Printf("save_changes: Error fetching activeUUIDs: %s", err); 
         return nil, err
     }
-    return providerBytes, nil 
+    return bytes, nil 
 }
