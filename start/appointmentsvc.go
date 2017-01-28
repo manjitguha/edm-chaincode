@@ -17,8 +17,8 @@ func (t *SimpleChaincode) upsertAppointment(stub shim.ChaincodeStubInterface, ar
     fmt.Println("Changing Blockchain During Meeting()")
 
 
-    if len(args) != 11 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 11. name of the variable and value to set")
+    if len(args) != 7 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 7. name of the variable and value to set")
     }
 
     appointment.AppointmentId = args[0]
