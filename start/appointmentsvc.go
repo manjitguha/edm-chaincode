@@ -137,7 +137,7 @@ func (t *SimpleChaincode) saveUUIDsForProvider(stub shim.ChaincodeStubInterface,
     if appointmentPresent == false {
         provider.uuidArray= append(provider.uuidArray, appointment.AppointmentId)
 
-        UUIDsBytes, err := json.Marshal(provider.uuidArray)
+        UUIDsBytes, err := json.Marshal(provider)
         log.Println("Saving")
         err = stub.PutState(appointment.ProviderId, UUIDsBytes)
         log.Println("Saved")
