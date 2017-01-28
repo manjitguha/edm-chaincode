@@ -40,6 +40,15 @@ type Provider struct{
     AppointmentSlotMap map[string]DateSlot `json:"appointmentSlotMap"`
 }
 
+//=============================================================================================================================
+// ReferralProvider - Defines the structure of ReferralProvider entity
+//=============================================================================================================================
+type ReferralProvider struct{
+    ReferralProviderId string `json:"_id"`
+    UUIDMap map[string]string `json:"uuidMap"`
+    AppointmentSlotMap map[string]DateSlot `json:"appointmentSlotMap"`
+}
+
 type DateSlot struct{
     AppointmentDate string `json:"appointmentDate"`
     TimeSlotMap map[string]string `json:"timeSlotMap"`

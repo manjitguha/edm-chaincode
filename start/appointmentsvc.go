@@ -203,6 +203,65 @@ func (t *SimpleChaincode) saveUUIDsForProvider(stub shim.ChaincodeStubInterface,
 }
 
 
+func (t *SimpleChaincode) saveUUIDsForReferralProvider(stub shim.ChaincodeStubInterface, appointment Appointment) ([]byte, error) {
+    var referralProvider ReferralProvider
+    log.Println("Inside saveUUIDsForProvider", appointment.ReferralProviderId)
+
+    referralProviderBytes, err := stub.GetState(appointment.ReferralProviderId);
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error fetching activeUUIDs: %s", err); 
+        return nil, err
+    }
+
+    log.Println("Before unmarshalling", len(referralProviderBytes))
+    if len(referralProviderBytes) >0 {
+        err = json.Unmarshal(referralProviderBytes, &referralProvider)
+        if referralProvider.AppointmentSlotMap[appointment.AppointmentDate].AppointmentDate == ""{
+            var dateSlot DateSlot
+            dateSlot.AppointmentDate = appointment.AppointmentDate
+            dateSlot.TimeSlotMap = make(map[string]string);
+            dateSlot.TimeSlotMap[appointment.AppointmentTime] = appointment.AppointmentId
+            referralProvider.AppointmentSlotMap[appointment.AppointmentDate] = dateSlot
+        }else if referralProvider.UUIDMap[appointment.AppointmentId] != ""{
+            referralProvider.AppointmentSlotMap[appointment.AppointmentDate].TimeSlotMap[appointment.AppointmentTime] = appointment.AppointmentId
+        }else {
+            referralProvider.AppointmentSlotMap[appointment.AppointmentDate].TimeSlotMap[referralProvider.UUIDMap[appointment.AppointmentId]] = ""
+            referralProvider.AppointmentSlotMap[appointment.AppointmentDate].TimeSlotMap[appointment.AppointmentTime] = appointment.AppointmentId
+        }
+    } else {
+        referralProvider.ReferralProviderId = appointment.ReferralProviderId
+        referralProvider.UUIDMap = make(map[string]string);
+        referralProvider.AppointmentSlotMap = make(map[string]DateSlot);
+        var dateSlot DateSlot
+        dateSlot.AppointmentDate = appointment.AppointmentDate
+        dateSlot.TimeSlotMap = make(map[string]string);
+        dateSlot.TimeSlotMap[appointment.AppointmentTime] = appointment.AppointmentId
+        referralProvider.AppointmentSlotMap[appointment.AppointmentDate] = dateSlot
+    }
+    log.Println("After unmarshalling")
+
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error unmarshalling activeUUIDs: %s", err); 
+        return nil, err
+    }
+    log.Println("Printing uuidMap")
+    log.Println(referralProvider.UUIDMap)
+
+    referralProvider.UUIDMap[appointment.AppointmentId] = appointment.AppointmentTime
+    log.Println(referralProvider)
+    UUIDsBytes, err := json.Marshal(referralProvider)
+    log.Println("Saving")
+    err = stub.PutState(appointment.ReferralProviderId, UUIDsBytes)
+    log.Println("Saved")
+    
+    if err != nil {
+        return nil, err
+    }
+
+    return referralProviderBytes, nil
+}
 
 func (t *SimpleChaincode) saveUUIDsForPatient(stub shim.ChaincodeStubInterface, appointment Appointment) ([]byte, error) {
     var patient Patient
