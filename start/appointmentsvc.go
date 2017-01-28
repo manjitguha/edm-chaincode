@@ -24,10 +24,11 @@ func (t *SimpleChaincode) upsertAppointment(stub shim.ChaincodeStubInterface, ar
     appointment.AppointmentId = args[0]
     appointment.PatientId = args[1]
     appointment.ProviderId = args[2]
-    appointment.AppointmentTime = args[3]
-    appointment.DiagnosisNotes = args[4]
-    appointment.PrescriptionNotes = args[5]
-    appointment.Status = args[6]
+    appointment.AppointmentDate = args[3]
+    appointment.AppointmentTime = args[4]
+    appointment.DiagnosisNotes = args[5]
+    appointment.PrescriptionNotes = args[6]
+    appointment.Status = args[7]
 
     bytes, err  := t.save_changes(stub, appointment)
 
@@ -113,6 +114,12 @@ func (t *SimpleChaincode) saveUUIDsForProvider(stub shim.ChaincodeStubInterface,
     } else {
         provider.ProviderId = appointment.ProviderId
         provider.UUIDArray = []string{}
+        provider.AppointmentSlotMap = make(map[string]DateSlot);
+        var dateSlot DateSlot
+        dateSlot.AppointmentDate = appointment.AppointmentDate
+        dateSlot.TimeSlotMap = make(map[string]string);
+        dateSlot.TimeSlotMap[appointment.AppointmentTime] = appointment.AppointmentTime
+        provider.AppointmentSlotMap[appointment.AppointmentDate] = dateSlot
     }
     log.Println("After unmarshalling")
 

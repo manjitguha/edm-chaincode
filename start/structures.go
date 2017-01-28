@@ -15,6 +15,7 @@ type Appointment struct{
     PharmacyId string `json:"pharmacyId"`
     SecretoryId string `json:"secretoryId"`
     LaboratoryId string `json:"laboratoryId"`
+    AppointmentDate string `json:"appointmentDate"`
     AppointmentTime string `json:"appointmentTime"`
     DiagnosisNotes string `json:"diagnosisNotes"`
     PrescriptionNotes string `json:"prescriptionNotes"`
@@ -36,6 +37,12 @@ type Patient struct{
 type Provider struct{
     ProviderId string `json:"providerId"`
     UUIDArray []string `json:"uuidArray"`
+    AppointmentSlotMap map[string]DateSlot `json:appointmentSlotMap`
+}
+
+type DateSlot struct{
+    AppointmentDate string `json:"appointmentDate"`
+    TimeSlotMap map[string]string `json:timeSlotMap`
 }
 
 
