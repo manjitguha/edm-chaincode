@@ -14,24 +14,20 @@ func (t *SimpleChaincode) upsertAppointment(stub shim.ChaincodeStubInterface, ar
     var err error
     fmt.Println("running createAppointment()")
     fmt.Println("Changing Blockchain createAppointment()")
+    fmt.Println("Changing Blockchain During Meeting()")
 
 
     if len(args) != 11 {
         return nil, errors.New("Incorrect number of arguments. Expecting 11. name of the variable and value to set")
     }
 
-
     appointment.AppointmentId = args[0]
-    appointment.Patient.PatientId = args[1]
-    appointment.Patient.PatientFirstName = args[2]
-    appointment.Patient.PatientLastName = args[3]
-    appointment.Provider.ProviderId = args[4]
-    appointment.Provider.ProviderFirstName = args[5]
-    appointment.Provider.ProviderLastName = args[6]
-    appointment.AppointmentTime = args[7]
-    appointment.DiagnosisNotes = args[8]
-    appointment.PrescriptionNotes = args[9]
-    appointment.Status = args[10]
+    appointment.PatientId = args[1]
+    appointment.ProviderId = args[2]
+    appointment.AppointmentTime = args[3]
+    appointment.DiagnosisNotes = args[4]
+    appointment.PrescriptionNotes = args[5]
+    appointment.Status = args[6]
 
     bytes, err  := t.save_changes(stub, appointment)
 
@@ -45,8 +41,6 @@ func (t *SimpleChaincode) upsertAppointment(stub shim.ChaincodeStubInterface, ar
 }
 
 func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appointment Appointment) ([]byte, error) {
-    uuidArray := []string{}
-  
     bytes, err := json.Marshal(appointment)
     if err != nil { 
         fmt.Printf("save_changes: Error converting Appointment record: %s", err); 
@@ -63,49 +57,88 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
         fmt.Printf("save_changes: Error storing Appointment record: %s", err); 
         return nil, err
     }
+    
+    if appointment.ProviderId != "" {
+        providerBytes, err  := t.saveUUIDsForProvider(stub, appointment)
+        if err != nil { 
+            log.Println(err)
+            fmt.Printf("save_changes: Error storing Appointment record: %s", err); 
+            return nil, err
+        }
+        log.Println(providerBytes)
+    }
+    /*if appointment.PatientId != nil {
+        activeUUIDsBytes, err  = t.saveUUIDsForPatient(stub, appointment)
+    }
+    if appointment.PharmacyId != nil {
+        activeUUIDsBytes, err  = t.saveUUIDsForPharmacy(stub, appointment)
+    }
+    if appointment.SecretoryId != nil {
+        activeUUIDsBytes, err  = t.saveUUIDsForSecretory(stub, appointment)
+    }
+    if appointment.LaboratoryId != nil {
+        activeUUIDsBytes, err  = t.saveUUIDsForLaboratory(stub, appointment)
+    }
+    if appointment.ReferralProviderId != nil {
+        activeUUIDsBytes, err  = t.saveUUIDsReferralProvider(stub, appointment)
+    }
+*/
+    if err != nil {
+        return nil, err
+    }
 
-    activeUUIDsBytes, err := stub.GetState("activeUUIDs");
+    return bytes, nil
+}
+
+
+func (t *SimpleChaincode) saveUUIDsForProvider(stub shim.ChaincodeStubInterface, appointment Appointment) ([]byte, error) {
+    var provider Provider
+    
+
+    providerBytes, err := stub.GetState(appointment.ProviderId);
     if err != nil { 
         log.Println(err)
         fmt.Printf("save_changes: Error fetching activeUUIDs: %s", err); 
         return nil, err
     }
 
-    err = json.Unmarshal(activeUUIDsBytes, &uuidArray)
+    err = json.Unmarshal(providerBytes, &provider)
     if err != nil { 
         log.Println(err)
         fmt.Printf("save_changes: Error unmarshalling activeUUIDs: %s", err); 
         return nil, err
     }
     log.Println("Printing uuidArray")
-    log.Println(uuidArray)
+    log.Println(provider.uuidArray)
 
     appointmentPresent := false
 
-    for i := 0; i < len(uuidArray); i++ {
-        if uuidArray[i] == appointment.AppointmentId {
+    for i := 0; i < len(provider.uuidArray); i++ {
+        if provider.uuidArray[i] == appointment.AppointmentId {
             appointmentPresent = true
             break
         }
     }
 
     if appointmentPresent == false {
-        uuidArray= append(uuidArray, appointment.AppointmentId)
+        provider.uuidArray= append(provider.uuidArray, appointment.AppointmentId)
 
-        UUIDsBytes, err := json.Marshal(uuidArray)
+        UUIDsBytes, err := json.Marshal(provider.uuidArray)
         log.Println("Saving")
-        err = stub.PutState("activeUUIDs", UUIDsBytes)
+        err = stub.PutState(appointment.ProviderId, UUIDsBytes)
         log.Println("Saved")
         if err != nil {
             return nil, err
         }
     }
 
-    
+    if err != nil {
+        return nil, err
+    }
 
-    log.Println(bytes)
-    return bytes, nil
+    return providerBytes, nil
 }
+
 
 // read - query function to read key/value pair
 func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
