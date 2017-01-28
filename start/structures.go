@@ -36,13 +36,13 @@ type Patient struct{
 //=============================================================================================================================
 type Provider struct{
     ProviderId string `json:"providerId"`
-    UUIDArray []string `json:"uuidArray"`
-    AppointmentSlotMap map[string]DateSlot `json:appointmentSlotMap`
+    UUIDMap map[string]string `json:"uuidMap"`
+    AppointmentSlotMap map[string]DateSlot `json:"appointmentSlotMap"`
 }
 
 type DateSlot struct{
     AppointmentDate string `json:"appointmentDate"`
-    TimeSlotMap map[string]string `json:timeSlotMap`
+    TimeSlotMap map[string]string `json:"timeSlotMap"`
 }
 
 

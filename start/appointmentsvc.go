@@ -111,14 +111,26 @@ func (t *SimpleChaincode) saveUUIDsForProvider(stub shim.ChaincodeStubInterface,
     log.Println("Before unmarshalling", len(providerBytes))
     if len(providerBytes) >0 {
         err = json.Unmarshal(providerBytes, &provider)
+        if provider.AppointmentSlotMap[appointment.AppointmentDate].AppointmentDate == ""{
+            var dateSlot DateSlot
+            dateSlot.AppointmentDate = appointment.AppointmentDate
+            dateSlot.TimeSlotMap = make(map[string]string);
+            dateSlot.TimeSlotMap[appointment.AppointmentTime] = appointment.AppointmentId
+            provider.AppointmentSlotMap[appointment.AppointmentDate] = dateSlot
+        }else if provider.UUIDMap[appointment.AppointmentId] == ""{
+            provider.AppointmentSlotMap[appointment.AppointmentDate].TimeSlotMap[appointment.AppointmentTime] = appointment.AppointmentId
+        }else {
+            provider.AppointmentSlotMap[appointment.AppointmentDate].TimeSlotMap[provider.UUIDMap[appointment.AppointmentId]] = ""
+            provider.AppointmentSlotMap[appointment.AppointmentDate].TimeSlotMap[appointment.AppointmentTime] = appointment.AppointmentId
+        }
     } else {
         provider.ProviderId = appointment.ProviderId
-        provider.UUIDArray = []string{}
+        provider.UUIDMap = make(map[string]string);
         provider.AppointmentSlotMap = make(map[string]DateSlot);
         var dateSlot DateSlot
         dateSlot.AppointmentDate = appointment.AppointmentDate
         dateSlot.TimeSlotMap = make(map[string]string);
-        dateSlot.TimeSlotMap[appointment.AppointmentTime] = appointment.AppointmentTime
+        dateSlot.TimeSlotMap[appointment.AppointmentTime] = appointment.AppointmentId
         provider.AppointmentSlotMap[appointment.AppointmentDate] = dateSlot
     }
     log.Println("After unmarshalling")
@@ -128,32 +140,16 @@ func (t *SimpleChaincode) saveUUIDsForProvider(stub shim.ChaincodeStubInterface,
         fmt.Printf("save_changes: Error unmarshalling activeUUIDs: %s", err); 
         return nil, err
     }
-    log.Println("Printing uuidArray")
-    log.Println(provider.UUIDArray)
+    log.Println("Printing uuidMap")
+    log.Println(provider.UUIDMap)
 
-    appointmentPresent := false
-
-    for i := 0; i < len(provider.UUIDArray); i++ {
-        if provider.UUIDArray[i] == appointment.AppointmentId {
-            log.Println("Appointment present")
-            appointmentPresent = true
-            break
-        }
-    }
-
-    if appointmentPresent == false {
-        uuidArray := append(provider.UUIDArray, appointment.AppointmentId)
-        provider.UUIDArray = uuidArray
-        log.Println(provider)
-        UUIDsBytes, err := json.Marshal(provider)
-        log.Println("Saving")
-        err = stub.PutState(appointment.ProviderId, UUIDsBytes)
-        log.Println("Saved")
-        if err != nil {
-            return nil, err
-        }
-    }
-
+    provider.UUIDMap[appointment.AppointmentId] = appointment.AppointmentTime
+    log.Println(provider)
+    UUIDsBytes, err := json.Marshal(provider)
+    log.Println("Saving")
+    err = stub.PutState(appointment.ProviderId, UUIDsBytes)
+    log.Println("Saved")
+    
     if err != nil {
         return nil, err
     }
