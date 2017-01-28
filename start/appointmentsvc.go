@@ -48,9 +48,12 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
     }
     log.Println("Saving Appointment")
    
-    log.Println("AppointmentId = %s", appointment.AppointmentId)
+    log.Println("AppointmentId = ", appointment.AppointmentId)
     
     err = stub.PutState(appointment.AppointmentId, bytes)
+
+    log.Println("Saving Appointment - PutState ", appointment.AppointmentId)
+   
 
     if err != nil { 
         log.Println(err)
@@ -59,6 +62,8 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
     }
     
     if appointment.ProviderId != "" {
+        log.Println("Inside appointment.ProviderId != \"\" ", appointment.ProviderId)
+   
         providerBytes, err  := t.saveUUIDsForProvider(stub, appointment)
         if err != nil { 
             log.Println(err)
@@ -93,7 +98,8 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
 
 func (t *SimpleChaincode) saveUUIDsForProvider(stub shim.ChaincodeStubInterface, appointment Appointment) ([]byte, error) {
     var provider Provider
-    
+    log.Println("Inside saveUUIDsForProvider", appointment.ProviderId)
+       
 
     providerBytes, err := stub.GetState(appointment.ProviderId);
     if err != nil { 
