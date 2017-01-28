@@ -209,3 +209,14 @@ func (t *SimpleChaincode) getActiveUUIDs(stub shim.ChaincodeStubInterface, args 
     }
     return activeUUIDsBytes, nil 
 }
+
+func (t *SimpleChaincode) getActiveUUIDsForProviders(stub shim.ChaincodeStubInterface, args []string)([]byte, error){
+    providerId := args[0]
+    providerBytes, err := stub.GetState(providerId);
+    if err != nil { 
+        log.Println(err)
+        fmt.Printf("save_changes: Error fetching activeUUIDs: %s", err); 
+        return nil, err
+    }
+    return providerBytes, nil 
+}
