@@ -27,7 +27,7 @@ type Appointment struct{
 //=============================================================================================================================
 type Patient struct{
     PatientId string `json:"patientId"`
-    uuidArray []string `json:"uuidArray"`
+    UUIDArray []string `json:"uuidArray"`
 }
 
 //=============================================================================================================================
@@ -35,7 +35,7 @@ type Patient struct{
 //=============================================================================================================================
 type Provider struct{
     ProviderId string `json:"providerId"`
-    uuidArray []string `json:"uuidArray"`
+    UUIDArray []string `json:"uuidArray"`
 }
 
 
@@ -44,7 +44,7 @@ type Provider struct{
 //=============================================================================================================================
 type Secretory struct{
     SecretoryId string `json:"secretoryId"`
-    uuidArray []string `json:"uuidArray"`
+    UUIDArray []string `json:"uuidArray"`
 }
 
 //=============================================================================================================================
@@ -52,7 +52,7 @@ type Secretory struct{
 //=============================================================================================================================
 type Pharmacy struct{
     PharmacyId string `json:"pharmacyId"`
-    uuidArray []string `json:"uuidArray"`
+    UUIDArray []string `json:"uuidArray"`
 }
 
 
@@ -61,13 +61,13 @@ type Pharmacy struct{
 //=============================================================================================================================
 type Laboratory struct{
     LaboratoryId string `json:"laboratoryId"`
-    uuidArray []string `json:"uuidArray"`
+    UUIDArray []string `json:"uuidArray"`
 }
 
 
 
 type ActiveUUIDs struct{
-    uuidArray []string `json:"uuidArray"`
+    UUIDArray []string `json:"uuidArray"`
 }
 
 const (
