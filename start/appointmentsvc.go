@@ -124,7 +124,7 @@ func (t *SimpleChaincode) save_changes(stub shim.ChaincodeStubInterface, appoint
     if appointment.ReferralProviderId != "" {
         log.Println("Inside appointment.ReferralProviderId != \"\" ", appointment.ReferralProviderId)
         
-        referralProviderBytes, err  := t.saveUUIDsForProvider(stub, appointment)
+        referralProviderBytes, err  := t.saveUUIDsForReferralProvider(stub, appointment)
         if err != nil { 
             log.Println(err)
             fmt.Printf("save_changes: Error storing Appointment record: %s", err); 
