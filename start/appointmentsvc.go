@@ -454,7 +454,7 @@ func (t *SimpleChaincode) getAppointment(stub shim.ChaincodeStubInterface, args 
     log.Println("Role = %s", role)
 
 
-    if role != PAYER && role != PROVIDER && role != PHARMACY && role != PATIENT && role != SECRETARY {
+    if role != PAYER && role != PROVIDER && role != PHARMACY && role != PATIENT && role != SECRETARY && role != LABORATORY{
         jsonResp = "{\"Error\":\"Role doesn't exist " + role + "\"}"
         return nil, errors.New(jsonResp)
     } 
