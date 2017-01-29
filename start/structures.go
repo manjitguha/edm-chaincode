@@ -19,6 +19,7 @@ type Appointment struct{
     AppointmentTime string `json:"appointmentTime"`
     DiagnosisNotes string `json:"diagnosisNotes"`
     PrescriptionNotes string `json:"prescriptionNotes"`
+    CurrentlyAssignedTo string `json:"currentlyAssignedTo"`
     Status string `json:"status"`
 }
 
